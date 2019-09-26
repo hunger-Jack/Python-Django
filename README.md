@@ -1,5 +1,13 @@
 # Python-Django
 
+# 项目应用创建
+```linux
+1. 创建项目
+django-admin startproject demo
+
+2. 创建应用
+python manage.py startapp booktest
+```
 ## 目录结构
 ```
 ├── booktest

@@ -11,6 +11,10 @@ class BookInfo(models.Model):
     b_title = models.CharField(max_length=20)
     b_pub_date = models.DateField()
 
+    def __str__(self):
+        """修改模型对象默认返回名称"""
+        return self.b_title
+
 
 class HeroInfo(models.Model):
     """英雄模型对象（多类）
@@ -22,4 +26,8 @@ class HeroInfo(models.Model):
     h_name = models.CharField(max_length=20)
     h_gender = models.BooleanField(default=True)  # 默认是True：男性，False：女性
     h_comment = models.CharField(max_length=128)
-    h_book = models.ForeignKey("BookInfo")
+    h_book = models.ForeignKey("BookInfo", on_delete=models.CASCADE)
+
+    def __str__(self):
+        """修改模型对象默认返回名称"""
+        return self.h_name

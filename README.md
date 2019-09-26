@@ -65,3 +65,29 @@ class BookInfoAdmin(admin.ModelAdmin):
 admin.site.register(BookInfo, BookInfoAdmin)  # 添加自定义类参数
 
 ```
+
+## 视图
+```linux
+1. 定义视图函数
+在booktest/views.py,定义各种视图函数，必须有一个参数，一般叫request，
+必须返回HTTPResponse对象，HTTPResponse对象的参数是返回给浏览器的内容
+例如：定义index视图函数
+from django.http import HttpResponse 
+
+
+def index(request):
+    return HttpResponse("this is index page")
+
+2. 配置URL
+url(正则表达式, 视图函数)
+一般在项目URL中配置应用urls模块，在应用urls模块中配置各种视图函数
+①配置项目中的URLconf
+urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('booktest.urls')),
+]
+②配置应用中的URLconf【注意正则表达式要严格匹配^$】
+urlpatterns = [
+    url(r'^index$', views.index),
+]
+```

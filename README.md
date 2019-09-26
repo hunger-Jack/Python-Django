@@ -1,12 +1,21 @@
 # Python-Django
 
-# 项目应用创建
+## 项目应用创建
 ```linux
 1. 创建项目
 django-admin startproject demo
 
 2. 创建应用
 python manage.py startapp booktest
+```
+
+## 迁移文件
+```linux
+1. 创建迁移文件
+python manage.py makemigrations
+
+2. 执行迁移文件
+python manage.py migrate
 ```
 ## 目录结构
 ```

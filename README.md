@@ -20,43 +20,52 @@
 ```
 
 ## 项目应用创建
-```linux
-1. 创建项目
-django-admin startproject demo
 
-2. 创建应用
+1.创建项目
+```linux
+django-admin startproject demo
+```
+
+2.创建应用
+```linux
 python manage.py startapp booktest
 ```
 
 ## 迁移文件
-```linux
-1. 创建迁移文件
-python manage.py makemigrations
 
-2. 执行迁移文件
+1.创建迁移文件
+```linux
+python manage.py makemigrations
+```
+2.执行迁移文件
+```linux
 python manage.py migrate
 ```
 
 ## 后台管理相关文件
+
+1.管理界面本地化
 ```linux
-1. 管理界面本地化
 在setting.py里面配置
 LANGUAGE_CODE = 'zh-hans' #使用中国语言
 TIME_ZONE = 'Asia/Shanghai' #使用中国上海时间
-
-2. 创建管理员
+```
+2.创建管理员
+```linux
 python manage.py createsuperuser  # 创建管理员账号
 python manage.py runserver  # 启动服务
 http://127.0.0.1:8000/admin/  # 打开管理界面
-
-3. 注册模型
+```
+3.注册模型
+```linux
 在admin.py操作
 admin.site.register(模型类名称)
 例如：
 from booktest.models import BookInfo
 admin.site.register(BookInfo)
-
-4. 自定义管理页面
+```
+4.自定义管理页面
+```linux
 在admin.py文件，自定义类，继承自admin.ModelAdmin类
 
 class BookInfoAdmin(admin.ModelAdmin):
@@ -67,8 +76,9 @@ admin.site.register(BookInfo, BookInfoAdmin)  # 添加自定义类参数
 ```
 
 ## 视图
+
+1.定义视图函数
 ```linux
-1. 定义视图函数
 在booktest/views.py,定义各种视图函数，必须有一个参数，一般叫request，
 必须返回HTTPResponse对象，HTTPResponse对象的参数是返回给浏览器的内容
 例如：定义index视图函数
@@ -77,8 +87,9 @@ from django.http import HttpResponse
 
 def index(request):
     return HttpResponse("this is index page")
-
-2. 配置URL
+```
+2.配置URL
+```linux
 url(正则表达式, 视图函数)
 一般在项目URL中配置应用urls模块，在应用urls模块中配置各种视图函数
 ①配置项目中的URLconf
@@ -90,4 +101,62 @@ urlpatterns = [
 urlpatterns = [
     url(r'^index$', views.index),
 ]
+```
+
+## 模板
+
+一、创建模板
+```linux
+1. 在项目根目录创建templates文件夹
+2. 在templates文件夹创建booktest应用文件夹，可能有多个应用模板。
+3. 在/templates/booktest下创建index.html模板文件
+4. 设置查找模板的路径:打开test1/settings.py文件，设置TEMPLATES的DIRS值
+'DIRS': [os.path.join(BASE_DIR, 'templates')],
+```
+
+二、定义模板
+```html
+在/templates/booktest/index.html添加如下代码
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index模板文件</title>
+</head>
+<body>
+<h1>{{title}}</h1>
+{%for i in list%}
+{{i}}<br>
+{%endfor%}
+</body>
+</html>
+------------------------------------
+{{变量名}}
+{%代码段%}
+```
+
+三、调用模板
+
+1.找到模板
+```python
+template = loader.get_template('booktest/index.html')
+```
+
+2.定义上下文：给模板文件传递数据
+```python
+context={'title':'图书列表','list':range(15)}
+```
+
+3.渲染模板：产生标准的html内容
+```python
+res_html = template.render(context)
+```
+
+简单版本的调用模板
+```python
+# return render(request, "模板路径", 数据)
+# 例如：
+def index(request):
+    return render(request, "booktest/index.html", {"title":"图书列表","list":range(15)})
 ```

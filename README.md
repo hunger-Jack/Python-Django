@@ -160,3 +160,73 @@ res_html = template.render(context)
 def index(request):
     return render(request, "booktest/index.html", {"title":"图书列表","list":range(15)})
 ```
+
+## 英雄-图书小练习
+
+1.定义视图
+
+①show_books视图
+```python
+def show_books(request):
+    """显示图书信息"""
+    # 1. 从model获取图书信息
+    books_list = BookInfo.objects.all()
+    # 2. 渲染模板
+    return render(request, "booktest/show_books.html", {"books": books_list})
+```
+②show_heros视图
+
+2.定义URLconf
+```
+①/books
+②/books/图书表的id，例如：/books/2
+这里需要在通过url传图书表id参数，需要在配置url时使用分组，例如：r"^books/(\d+)$"
+```
+3.定义模板
+
+①show_books.html
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图书信息</title>
+</head>
+<body>
+<h1>图书信息</h1>
+<ul>
+    {%for book in books%}
+        <li>
+            <a href="/books/{{book.id}}">
+                {{book.b_title}}
+            </a>
+        </li>
+    {% endfor%}
+</ul>
+</body>
+</html>
+```
+
+②show_heros.html
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>{{book.b_title}}</h1>
+英雄信息：
+<ul>
+    {% for hero in heros %}
+        <li>
+            {{hero.h_name}}--{{hero.h_comment}}
+        </li>
+    {% empty %}
+        <li>没有英雄信息</li>
+    {% endfor %}
+</ul>
+</body>
+</html>
+```

@@ -19,5 +19,7 @@ from booktest import views
 
 
 urlpatterns = [
-    re_path(r'^index$', views.index),
+    re_path(r"^index$", views.index),
+    re_path(r"^books$", views.show_books),
+    re_path(r"^books/(\d+)$", views.show_heros),
 ]

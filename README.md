@@ -255,3 +255,75 @@ def show_heros(request, b_id):
 </body>
 </html>
 ```
+
+## 中途把sqlite改为mysql
+
+1.把原有数据导出
+```linux
+python manage.py dumpdata > data.json
+```
+2.修改数据库配置文件
+```python
+# /demo/demo/settings.py
+
+DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'books_heros',  # 数据库名字
+        'USER': 'root',  # 数据库登录账号
+        'PASSWORD': '123qwe',  # 数据库登录密码
+        'HOST': 'localhost',  # 数据库所在主机
+        'PORT': 3306  # 数据库所在端口
+    }
+}
+```
+3.安装pymysql包
+```linux
+pip install pymysql
+```
+4.使MySQLdb支持pymysql
+```python
+# /demo/demo/__init__.py
+
+import pymysql
+pymysql.install_as_MySQLdb()
+```
+5.处理报错信息-ImproperlyConfigured
+```linux
+  File "/Users/lanbo/.local/share/virtualenvs/py_django/lib/python3.6/site-packages/django/db/backends/mysql/base.py", line 36, in <module>
+    raise ImproperlyConfigured('mysqlclient 1.3.13 or newer is required; you have %s.' % Database.__version__)
+django.core.exceptions.ImproperlyConfigured: mysqlclient 1.3.13 or newer is required; you have 0.9.3.
+```
+解决方法：根据你的提示路径打开`base.py`，把35、36 行前面加 # 注释掉就好了，就像下面这样：
+```linux
+ 34 version = Database.version_info
+ 35 #if version < (1, 3, 13):
+ 36 #    raise ImproperlyConfigured('mysqlclient 1.3.13 or newer is required; you     have %s.' % Database.__version__)
+```
+6.处理报错信息-AttributeError
+```linux
+  File "/Users/lanbo/.local/share/virtualenvs/py_django/lib/python3.6/site-packages/django/db/backends/mysql/operations.py", line 146, in last_executed_query
+    query = query.decode(errors='replace')
+AttributeError: 'str' object has no attribute 'decode'
+```
+解决方法：根据提示打开报错的文件 operations.py，找到 146 行，把 decode 改成 encode 即可，类似下面这样：
+```linux
+140     def last_executed_query(self, cursor, sql, params):
+141         # With MySQLdb, cursor objects have an (undocumented) "_executed"
+142         # attribute where the exact query sent to the database is saved.
+143         # See MySQLdb/cursors.py in the source distribution.
+144         query = getattr(cursor, '_executed', None)
+145         if query is not None:
+146             query = query.encode(errors='replace')	# 这里把 decode 改为 encode
+147         return query
+```
+7.数据库迁移
+```linux
+python manage.py migrate
+```
+8.导入数据到mysql中的books_heros数据库中
+```linux
+python manage.py loaddata data.json
+```

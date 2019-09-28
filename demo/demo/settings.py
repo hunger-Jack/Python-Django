@@ -76,8 +76,14 @@ WSGI_APPLICATION = 'demo.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'books_heros',  # 数据库名字
+        'USER': 'root',  # 数据库登录账号
+        'PASSWORD': '123qwe',  # 数据库登录密码
+        'HOST': 'localhost',  # 数据库所在主机
+        'PORT': 3306  # 数据库所在端口
     }
 }
 

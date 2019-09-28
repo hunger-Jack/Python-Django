@@ -175,6 +175,18 @@ def show_books(request):
     return render(request, "booktest/show_books.html", {"books": books_list})
 ```
 ②show_heros视图
+```python
+def show_heros(request, b_id):
+    """显示英雄信息"""
+    # 1. 根据b_id从model获取图书信息
+    book = BookInfo.objects.get(id = b_id)
+
+    # 2. 获取与图书关联的英雄信息
+    heros = book.heroinfo_set.all()
+
+    # 3. 渲染模板
+    return render(request, "booktest/show_heros.html", {"book": book, "heros": heros})
+```
 
 2.定义URLconf
 ```

@@ -31,6 +31,19 @@ django-admin startproject demo
 python manage.py startapp booktest
 ```
 
+3.注册应用
+```python
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'booktest'  # 注册booktest应用
+]
+```
+
 ## 迁移文件
 
 1.创建迁移文件

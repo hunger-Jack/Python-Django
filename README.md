@@ -393,3 +393,67 @@ insert into booktest_heroinfo(h_name,h_gender,h_book_id,h_comment,isDelete) valu
 ('苗若兰',0,7,'黄衣',0), ('程灵素',0,7,'医术',0), 
 ('袁紫衣',0,7,'六合拳',0);
 ```
+## 修改视图
+1.修改show_books模板，添加【新增】和【删除】按钮
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图书信息</title>
+</head>
+<body>
+<a href="/create">新增图书</a>
+<h1>图书信息</h1>
+<ul>
+    {%for book in books%}
+        <li>
+            <a href="/books/{{book.id}}">
+                {{book.b_title}}
+            </a>----
+            <a href="/delete{{bbook.id}}">删除</a>
+        </li>
+    {% endfor%}
+</ul>
+</body>
+</html>
+```
+2.添加/create，/delete新增图书视图和删除图书视图
+```python
+def create(request):
+    """新增图书"""
+    # 1. 获取图书对象
+    book = BookInfo()
+
+    # 2. 添加数据
+    book.b_title = "流星蝴蝶剑"
+    book.b_pub_date = date(1987, 2, 12)
+
+    # 3. 保存
+    book.save()
+
+    # 4. 重定向/index页面
+    return redirect("/books")
+
+def delete(request, b_id):
+    """删除图书"""
+    # 1. 根数b_id获取图书对象
+    book = BookInfo.objects.get(id=b_id)
+
+    # 2. 删除对应图书
+    book.delete()
+
+    # 3. 重定向/index页面
+    return redirect("/books")
+```
+
+3.修改URLconf
+```python
+urlpatterns = [
+    re_path(r"^index$", views.index),
+    re_path(r"^books$", views.show_books),
+    re_path(r"^books/(\d+)$", views.show_heros),
+    re_path(r"^create$", views.create),
+    re_path(r"^delete(\d+)$", views.delete)
+]
+```

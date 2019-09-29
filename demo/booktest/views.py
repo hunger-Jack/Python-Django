@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from datetime import date
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.template import loader,RequestContext
 from booktest.models import BookInfo
@@ -39,3 +40,31 @@ def show_heros(request, b_id):
 
     # 3. 渲染模板
     return render(request, "booktest/show_heros.html", {"book": book, "heros": heros})
+
+
+def create(request):
+    """新增图书"""
+    # 1. 获取图书对象
+    book = BookInfo()
+
+    # 2. 添加数据
+    book.b_title = "流星蝴蝶剑"
+    book.b_pub_date = date(1987, 2, 12)
+
+    # 3. 保存
+    book.save()
+
+    # 4. 重定向/index页面
+    return redirect("/books")
+
+
+def delete(request, b_id):
+    """删除图书"""
+    # 1. 根数b_id获取图书对象
+    book = BookInfo.objects.get(id=b_id)
+
+    # 2. 删除对应图书
+    book.delete()
+
+    # 3. 重定向/index页面
+    return redirect("/books")

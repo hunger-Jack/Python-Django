@@ -5,13 +5,15 @@
     <title>图书信息</title>
 </head>
 <body>
+<a href="/create">新增图书</a>
 <h1>图书信息</h1>
 <ul>
     {%for book in books%}
         <li>
             <a href="/books/{{book.id}}">
                 {{book.b_title}}
-            </a>
+            </a>----
+            <a href="/delete{{book.id}}">删除</a>
         </li>
     {% endfor%}
 </ul>

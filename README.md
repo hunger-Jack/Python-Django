@@ -327,3 +327,69 @@ python manage.py migrate
 ```linux
 python manage.py loaddata data.json
 ```
+
+## 数据库添加新的字段和新的数据
+1.在models添加新的字段
+```python
+class BookInfo(models.Model):
+    """图书模型对象（一类）
+    b_title: 图书名称
+    b_pub_date: 出版日期
+    b_read: 阅读量----新增
+    b_comment: 评论量----新增
+    isDelete: 逻辑删除----新增
+    """
+    b_title = models.CharField(max_length=20)
+    b_pub_date = models.DateField()
+    b_read = models.IntegerField(default=0)
+    b_comment = models.IntegerField(default=0)
+    isDelete = models.BooleanField(default=False)
+
+    def __str__(self):
+        """修改模型对象默认返回名称"""
+        return self.b_title
+
+
+class HeroInfo(models.Model):
+    """英雄模型对象（多类）
+    h_name: 英雄姓名
+    h_gender: 英雄性别
+    h_comment: 英雄简介
+    h_book: 英雄所属图书外键
+    isDelete: 逻辑删除----新增
+    """
+    h_name = models.CharField(max_length=20)
+    h_gender = models.BooleanField(default=True)  # 默认是True：男性，False：女性
+    h_comment = models.CharField(max_length=128)
+    h_book = models.ForeignKey("BookInfo", on_delete=models.CASCADE)
+    isDelete = models.BooleanField(default=False)
+
+    def __str__(self):
+        """修改模型对象默认返回名称"""
+        return self.h_name
+```
+2.创建迁移文件
+```linux
+python manage.py makemigrations
+```
+3.执行迁移文件
+```linux
+python manage.py migrate
+```
+4.在数据库插入数据
+```sql
+insert into booktest_bookinfo(b_title,b_pub_date,b_read,b_comment,isDelete) values 
+('射雕英雄传','1980-5-1',12,34,0), ('天龙八部','1986-7-24',36,40,0), 
+('笑傲江湖','1995-12-24',20,80,0), ('雪山飞狐','1987-11-11',58,24,0);
+
+insert into booktest_heroinfo(h_name,h_gender,h_book_id,h_comment,isDelete) values 
+('郭靖',1,4,'降龙十八掌',0), ('黄蓉',0,4,'打狗棍法',0), 
+('黄药师',1,4,'弹指神通',0), ('欧阳锋',1,4,'蛤蟆功',0), 
+('梅超风',0,4,'九阴白骨爪',0), ('乔峰',1,5,'降龙十八掌',0), 
+('段誉',1,5,'六脉神剑',0), ('虚竹',1,5,'天山六阳掌',0), 
+('王语嫣',0,5,'神仙姐姐',0), ('令狐冲',1,6,'独孤九剑',0), 
+('任盈盈',0,6,'弹琴',0), ('岳不群',1,6,'华山剑法',0), 
+('东方不败',0,6,'葵花宝典',0), ('胡斐',1,7,'胡家刀法',0), 
+('苗若兰',0,7,'黄衣',0), ('程灵素',0,7,'医术',0), 
+('袁紫衣',0,7,'六合拳',0);
+```

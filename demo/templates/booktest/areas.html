@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>当前地区：</h1>{{areas.a_title}}
+<div>---------------------------------------------------</div>
+<h1>上级地区：</h1>{{parent.a_title}}
+<div>---------------------------------------------------</div>
+<ul>
+    {% for temp in children%}
+    <li>
+        {{ temp.a_title }}
+    </li>
+    {% endfor%}
+</ul>
+</body>
+</html>

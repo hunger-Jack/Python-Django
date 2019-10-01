@@ -457,3 +457,64 @@ urlpatterns = [
     re_path(r"^delete(\d+)$", views.delete)
 ]
 ```
+## 地区查询自关联demo
+1.定义模型，导入数据库数据
+```python
+class AreaInfo(models.Model):
+    """地区模型对象（自关联）"""
+    b_title = models.CharField(max_length=20)
+    b_parent_id = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
+```
+
+2.定义视图
+```python
+def areas(request):
+    """显示地区信息"""
+    # 1. 获取广州地区信息
+    areas = AreaInfo.objects.get(a_title="广州市")
+
+    # 2. 获取与广州关联的父级信息
+    parent = areas.a_parent  # 多查询一注意不要加括号
+
+    # 3. 获取与广州关联的下级信息
+    children = areas.areainfo_set.all()  # 一查询多注意areainfo是小写
+
+    # 4. 返回给浏览器信息
+    return render(request, "booktest/areas.html", {"areas": areas, "parent": parent, "children": children})
+```
+
+3.配置URLconf
+```python
+urlpatterns = [
+    re_path(r"^index$", views.index),
+    re_path(r"^books$", views.show_books),
+    re_path(r"^books/(\d+)$", views.show_heros),
+    re_path(r"^create$", views.create),
+    re_path(r"^delete(\d+)$", views.delete),
+    re_path(r"^areas$", views.areas),  # 新增
+]
+```
+
+4.定义模板
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>当前地区：</h1>{{areas.a_title}}
+<div>---------------------------------------------------</div>
+<h1>上级地区：</h1>{{parent.a_title}}
+<div>---------------------------------------------------</div>
+<ul>
+    {% for temp in children%}
+    <li>
+        {{ temp.a_title }}
+    </li>
+    {% endfor%}
+</ul>
+</body>
+</html>
+```

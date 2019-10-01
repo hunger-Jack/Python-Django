@@ -2,7 +2,7 @@ from datetime import date
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.template import loader,RequestContext
-from booktest.models import BookInfo
+from booktest.models import BookInfo,AreaInfo
 # Create your views here.
 
 
@@ -68,3 +68,18 @@ def delete(request, b_id):
 
     # 3. 重定向/index页面
     return redirect("/books")
+
+
+def areas(request):
+    """显示地区信息"""
+    # 1. 获取广州地区信息
+    areas = AreaInfo.objects.get(a_title="广州市")
+
+    # 2. 获取与广州关联的父级信息
+    parent = areas.a_parent  # 多查询一注意不要加括号
+
+    # 3. 获取与广州关联的下级信息
+    children = areas.areainfo_set.all()  # 一查询多注意areainfo是小写
+
+    # 4. 返回给浏览器信息
+    return render(request, "booktest/areas.html", {"areas": areas, "parent": parent, "children": children})

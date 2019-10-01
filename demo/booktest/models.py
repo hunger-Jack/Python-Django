@@ -39,3 +39,9 @@ class HeroInfo(models.Model):
     def __str__(self):
         """修改模型对象默认返回名称"""
         return self.h_name
+
+
+class AreaInfo(models.Model):
+    """地区模型对象（自关联）"""
+    a_title = models.CharField(max_length=20)
+    a_parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)

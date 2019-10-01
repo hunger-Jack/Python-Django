@@ -23,5 +23,6 @@ urlpatterns = [
     re_path(r"^books$", views.show_books),
     re_path(r"^books/(\d+)$", views.show_heros),
     re_path(r"^create$", views.create),
-    re_path(r"^delete(\d+)$", views.delete)
+    re_path(r"^delete(\d+)$", views.delete),
+    re_path(r"^areas$", views.areas),
 ]

@@ -3,6 +3,16 @@ from django.db import models
 # Create your models here.
 
 
+class BookInfoManager(models.Manager):
+    """自定义添加图书管理器对象"""
+    def create_book(self, b_title, b_pub_date):
+        book = self.model()  # self.model可以获取当前调用模型类对象
+        book.b_title = b_title
+        book.b_pub_date = b_pub_date
+        book.save()
+        return book
+
+
 class BookInfo(models.Model):
     """图书模型对象（一类）
     b_title: 图书名称
@@ -16,6 +26,7 @@ class BookInfo(models.Model):
     b_read = models.IntegerField(default=0)
     b_comment = models.IntegerField(default=0)
     isDelete = models.BooleanField(default=False)
+    books = BookInfoManager()
 
     def __str__(self):
         """修改模型对象默认返回名称"""

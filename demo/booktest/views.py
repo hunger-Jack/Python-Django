@@ -25,7 +25,7 @@ def index(request):
 def show_books(request):
     """显示图书信息"""
     # 1. 从model获取图书信息
-    books_list = BookInfo.objects.all()
+    books_list = BookInfo.books.all()
     # 2. 渲染模板
     return render(request, "booktest/show_books.html", {"books": books_list})
 
@@ -33,7 +33,7 @@ def show_books(request):
 def show_heros(request, b_id):
     """显示英雄信息"""
     # 1. 根据b_id从model获取图书信息
-    book = BookInfo.objects.get(id = b_id)
+    book = BookInfo.books.get(id = b_id)
 
     # 2. 获取与图书关联的英雄信息
     heros = book.heroinfo_set.all()
@@ -45,14 +45,17 @@ def show_heros(request, b_id):
 def create(request):
     """新增图书"""
     # 1. 获取图书对象
-    book = BookInfo()
+    #book = BookInfo()
 
-    # 2. 添加数据
-    book.b_title = "流星蝴蝶剑"
-    book.b_pub_date = date(1987, 2, 12)
+    # # 2. 添加数据
+    # book.b_title = "流星蝴蝶剑"
+    # book.b_pub_date = date(1987, 2, 12)
+    #
+    # # 3. 保存
+    # book.save()
 
-    # 3. 保存
-    book.save()
+    # 使用自定义管理器操作数据库添加图书
+    BookInfo.books.create_book("神雕侠侣", "2012-2-12")
 
     # 4. 重定向/index页面
     return redirect("/books")
@@ -61,7 +64,7 @@ def create(request):
 def delete(request, b_id):
     """删除图书"""
     # 1. 根数b_id获取图书对象
-    book = BookInfo.objects.get(id=b_id)
+    book = BookInfo.books.get(id=b_id)
 
     # 2. 删除对应图书
     book.delete()

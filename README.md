@@ -518,3 +518,9 @@ urlpatterns = [
 </body>
 </html>
 ```
+## 元选项
+```python
+class BookInfo(models.Model):
+    class Meta(object):
+        db_table = "bookinfo"  # 定义表名，不依赖于应用名称
+```

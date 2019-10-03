@@ -25,4 +25,6 @@ urlpatterns = [
     re_path(r"^create$", views.create),
     re_path(r"^delete(\d+)$", views.delete),
     re_path(r"^areas$", views.areas),
+    re_path(r"^login_form$", views.login_form),
+    re_path(r"^login_form_check$", views.login_form_check),
 ]

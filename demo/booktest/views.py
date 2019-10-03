@@ -1,6 +1,6 @@
 from datetime import date
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.template import loader,RequestContext
 from booktest.models import BookInfo,AreaInfo
 # Create your views here.
@@ -86,3 +86,21 @@ def areas(request):
 
     # 4. 返回给浏览器信息
     return render(request, "booktest/areas.html", {"areas": areas, "parent": parent, "children": children})
+
+
+def login_form(request):
+    """form表单登录页面"""
+    return render(request, "booktest/login_form.html")
+
+
+def login_form_check(request):
+    """form表单验证"""
+    # 1. 获取用户名和密码
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+
+    # 2. 验证用户名和密码,模拟username=rambo,password=123qwe
+    if username == "rambo" and password == "123qwe":
+        return redirect("/index")
+    else:
+        return redirect("/login_form")

@@ -524,3 +524,55 @@ class BookInfo(models.Model):
     class Meta(object):
         db_table = "bookinfo"  # 定义表名，不依赖于应用名称
 ```
+
+## form表单登录demo
+1.定义视图
+```python
+def login_form(request):
+    """form表单登录页面"""
+    return render(request, "booktest/login_form.html")
+
+
+def login_form_check(request):
+    """form表单验证"""
+    # 1. 获取用户名和密码
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+
+    # 2. 验证用户名和密码,模拟username=rambo,password=123qwe
+    if username == "rambo" and password == "123qwe":
+        return redirect("/index")
+    else:
+        return redirect("/login_form")
+```
+
+2.配置URLconf
+```python
+urlpatterns = [
+    re_path(r"^index$", views.index),
+    re_path(r"^books$", views.show_books),
+    re_path(r"^books/(\d+)$", views.show_heros),
+    re_path(r"^create$", views.create),
+    re_path(r"^delete(\d+)$", views.delete),
+    re_path(r"^areas$", views.areas),
+    re_path(r"^login_form$", views.login_form),  # 新增
+    re_path(r"^login_form_check$", views.login_form_check),  # 新增
+```
+
+3.定义模板
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+<form method="post" action="/login_form_check">
+    用户名：<input type="text" name="username" autocomplete="off"><br>
+    密码：<input type="password" name="password" autocomplete="off"><br>
+    <button type="submit">登录</button>
+</form>
+</body>
+</html>
+```

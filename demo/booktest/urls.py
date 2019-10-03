@@ -27,4 +27,6 @@ urlpatterns = [
     re_path(r"^areas$", views.areas),
     re_path(r"^login_form$", views.login_form),
     re_path(r"^login_form_check$", views.login_form_check),
+    re_path(r"^login_ajax$", views.login_ajax),
+    re_path(r"^login_ajax_check$", views.login_ajax_check),
 ]

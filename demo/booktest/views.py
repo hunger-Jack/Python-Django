@@ -104,3 +104,21 @@ def login_form_check(request):
         return redirect("/index")
     else:
         return redirect("/login_form")
+
+
+def login_ajax(request):
+    """ajax登录页面"""
+    return render(request, "booktest/login_ajax.html")
+
+
+def login_ajax_check(request):
+    """ajax登录验证"""
+    # 1. 获取用户名和密码
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+
+    # 2. 验证用户名和密码,模拟username=rambo,password=123qwe
+    if username == "rambo" and password == "123qwe":
+        return JsonResponse({"res": 1})
+    else:
+        return JsonResponse({"res": 0})

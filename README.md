@@ -576,3 +576,87 @@ urlpatterns = [
 </body>
 </html>
 ```
+
+## ajax异步登录demo
+1.定义视图
+```python
+def login_ajax(request):
+    """ajax登录页面"""
+    return render(request, "booktest/login_ajax.html")
+
+
+def login_ajax_check(request):
+    """ajax登录验证"""
+    # 1. 获取用户名和密码
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+
+    # 2. 验证用户名和密码,模拟username=rambo,password=123qwe
+    if username == "rambo" and password == "123qwe":
+        return JsonResponse({"res": 1})
+    else:
+        return JsonResponse({"res": 0})
+```
+
+2.配合URLconf
+```python
+urlpatterns = [
+    re_path(r"^index$", views.index),
+    re_path(r"^books$", views.show_books),
+    re_path(r"^books/(\d+)$", views.show_heros),
+    re_path(r"^create$", views.create),
+    re_path(r"^delete(\d+)$", views.delete),
+    re_path(r"^areas$", views.areas),
+    re_path(r"^login_form$", views.login_form),
+    re_path(r"^login_form_check$", views.login_form_check),
+    re_path(r"^login_ajax$", views.login_ajax),  # 新增
+    re_path(r"^login_ajax_check$", views.login_ajax_check),  # 新增
+```
+
+3.定义模板
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录ajax</title>
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script>
+        $(function () {
+            $("#btnLogin").click(function () {
+                $.ajax({
+                    url: "/login_ajax_check",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        username: $("#username").val(),
+                        password: $("#password").val()
+                    }
+                }).success(function (data) {
+                    if(data.res == "0") {
+                        $("#errorMsg").show().html("用户名或密码错误")
+                    }
+                    else {
+                        location.href = "/index"
+                    }
+                })
+            })
+        })
+    </script>
+    <style>
+        #errorMsg {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div>
+    用户名：<input type="text" id="username" autocomplete="off"><br>
+    密码：<input type="password" id="password" autocomplete="off"><br>
+    <button type="text" id="btnLogin">登录</button>
+    <div id="errorMsg"></div>
+</div>
+</body>
+</html>
+```

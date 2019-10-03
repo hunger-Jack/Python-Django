@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录ajax</title>
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script>
+        $(function () {
+            $("#btnLogin").click(function () {
+                $.ajax({
+                    url: "/login_ajax_check",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        username: $("#username").val(),
+                        password: $("#password").val()
+                    }
+                }).success(function (data) {
+                    if(data.res == "0") {
+                        $("#errorMsg").show().html("用户名或密码错误")
+                    }
+                    else {
+                        location.href = "/index"
+                    }
+                })
+            })
+        })
+    </script>
+    <style>
+        #errorMsg {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div>
+    用户名：<input type="text" id="username" autocomplete="off"><br>
+    密码：<input type="password" id="password" autocomplete="off"><br>
+    <button type="text" id="btnLogin">登录</button>
+    <div id="errorMsg"></div>
+</div>
+</body>
+</html>

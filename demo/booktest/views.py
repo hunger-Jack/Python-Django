@@ -90,7 +90,11 @@ def areas(request):
 
 def login_form(request):
     """form表单登录页面"""
-    return render(request, "booktest/login_form.html")
+    # 判断是否有isLogin字段session,如果有直接跳转首页，否则跳转登录页
+    if request.session.get("isLogin"):
+        return redirect("/index")
+    else:
+        return render(request, "booktest/login_form.html")
 
 
 def login_form_check(request):
@@ -101,6 +105,8 @@ def login_form_check(request):
 
     # 2. 验证用户名和密码,模拟username=rambo,password=123qwe
     if username == "rambo" and password == "123qwe":
+        # 设置session标记已经登录的状态
+        request.session["isLogin"] = True
         return redirect("/index")
     else:
         return redirect("/login_form")

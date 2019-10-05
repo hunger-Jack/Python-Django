@@ -114,7 +114,13 @@ def login_form_check(request):
 
 def login_ajax(request):
     """ajax登录页面"""
-    return render(request, "booktest/login_ajax.html")
+
+    # 读取cookie
+    cookies = request.COOKIES
+    name = cookies["name"]
+
+    # 把获取的cookie值传给login_ajax模板
+    return render(request, "booktest/login_ajax.html", {"name": name})
 
 
 def login_ajax_check(request):
@@ -123,8 +129,14 @@ def login_ajax_check(request):
     username = request.POST.get("username")
     password = request.POST.get("password")
 
+    # 设置cookie
+    response = JsonResponse({"res": 1})
+    response.set_cookie("name", "rambo", max_age=7 * 24 * 3600)
+
     # 2. 验证用户名和密码,模拟username=rambo,password=123qwe
     if username == "rambo" and password == "123qwe":
-        return JsonResponse({"res": 1})
+        # return JsonResponse({"res": 1})
+        return response
     else:
         return JsonResponse({"res": 0})
+

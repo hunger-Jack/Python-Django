@@ -721,3 +721,17 @@ def login_ajax_check(request):
 // 使用value标签接受数据
 用户名：<input type="text" id="username" autocomplete="off" value="{{name}}"><br>
 ```
+
+## 登录状态检测装饰器
+```python
+def login_check(func):
+    """检测是否登录的装饰器"""
+    def wrapper_func(request, *args, **kwargs):
+        # 如果cookie中有isLogin的session字段，直接返回对应视图定义的url，否则返回登录页面
+        if request.session.get("isLogin"):
+            print("==>测试代码<==")
+            return func(request, *args, **kwargs)
+        else:
+            return redirect("/login_form")
+    return wrapper_func
+```

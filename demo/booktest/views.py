@@ -6,6 +6,18 @@ from booktest.models import BookInfo,AreaInfo
 # Create your views here.
 
 
+def login_check(func):
+    """检测是否登录的装饰器"""
+    def wrapper_func(request, *args, **kwargs):
+        # 如果cookie中有isLogin的session字段，直接返回对应视图定义的url，否则返回登录页面
+        if request.session.get("isLogin"):
+            print("==>测试代码<==")
+            return func(request, *args, **kwargs)
+        else:
+            return redirect("/login_form")
+    return wrapper_func
+
+
 def index(request):
     """index模板"""
     # # 1. 获取模板
@@ -90,9 +102,9 @@ def areas(request):
 
 def login_form(request):
     """form表单登录页面"""
-    # 判断是否有isLogin字段session,如果有直接跳转首页，否则跳转登录页
+    # 判断是否有isLogin字段session,如果有直接跳转修改密码页面，否则跳转登录页
     if request.session.get("isLogin"):
-        return redirect("/index")
+        return redirect("/change_pwd")
     else:
         return render(request, "booktest/login_form.html")
 
@@ -105,9 +117,10 @@ def login_form_check(request):
 
     # 2. 验证用户名和密码,模拟username=rambo,password=123qwe
     if username == "rambo" and password == "123qwe":
-        # 设置session标记已经登录的状态
+        # 设置session标记已经登录的状态,设置用户名session
         request.session["isLogin"] = True
-        return redirect("/index")
+        request.session["username"] = username
+        return redirect("/change_pwd")
     else:
         return redirect("/login_form")
 
@@ -140,3 +153,21 @@ def login_ajax_check(request):
     else:
         return JsonResponse({"res": 0})
 
+
+@login_check
+def change_pwd(request):
+    """修改密码页面"""
+    return render(request, "booktest/change_pwd.html")
+
+
+@login_check
+def change_pwd_action(request):
+    """提交修改密码请求"""
+    # 1. 获取修改的密码
+    password = request.POST.get("password")
+
+    # 2. 获取当前用户名
+    username = request.session.get("username")
+
+    # 3. 模拟提交数据库修改成功并且返回相应的数据
+    return HttpResponse("%s 修改的密码是：%s" % (username, password))

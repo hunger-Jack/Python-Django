@@ -19,6 +19,9 @@ from booktest import views
 
 
 urlpatterns = [
+    re_path(r"^index2$", views.index, name="index"),  # 无参数反向解析
+    re_path(r"^index2/(\d+)$", views.index, name="index"),  # 有位置参数的反向解析
+    re_path(r"^index2/(?P<num>\d+)$", views.index, name="index"),  # 有关键字参数的反向解析
     re_path(r"^index$", views.index),
     re_path(r"^books$", views.show_books),
     re_path(r"^books/(\d+)$", views.show_heros),

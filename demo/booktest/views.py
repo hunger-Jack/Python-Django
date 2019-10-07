@@ -6,6 +6,7 @@ from django.template import loader,RequestContext
 from booktest.models import BookInfo,AreaInfo
 from PIL import Image, ImageDraw, ImageFont
 from django.utils.six import BytesIO
+from django.urls import reverse
 # Create your views here.
 
 
@@ -21,7 +22,7 @@ def login_check(func):
     return wrapper_func
 
 
-def index(request):
+def index(request, *args):
     """index模板"""
     # # 1. 获取模板
     # template = loader.get_template("booktest/index.html")

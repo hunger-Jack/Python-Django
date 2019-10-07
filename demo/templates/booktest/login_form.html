@@ -5,6 +5,10 @@
     <title>登录</title>
 </head>
 <body>
+<a href="{% url 'booktest:index' %}">首页</a>
+<a href="{% url 'booktest:index' 1 %}">首页</a>
+<a href="{% url 'booktest:index' num=2 %}">首页</a>
+<br><br>
 <form method="post" action="/login_form_check">
     {% csrf_token %}
     用户名：<input type="text" name="username" autocomplete="off"><br>

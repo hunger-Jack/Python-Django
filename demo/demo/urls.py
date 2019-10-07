@@ -18,5 +18,5 @@ from django.urls import re_path,include
 
 urlpatterns = [
     re_path(r'admin/', admin.site.urls),
-    re_path(r'^', include("booktest.urls")),
+    re_path(r'^', include(("booktest.urls", "booktest"), namespace="booktest")),  # 配置反向解析，值一般是应用的名字
 ]

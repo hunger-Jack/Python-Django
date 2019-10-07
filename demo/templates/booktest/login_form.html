@@ -9,6 +9,10 @@
     {% csrf_token %}
     用户名：<input type="text" name="username" autocomplete="off"><br>
     密码：<input type="password" name="password" autocomplete="off"><br>
+    验证码：<input type="text" name="yzm">
+    <img src="/verify_code" alt="">
+    <a href="/login_form">重新获取验证码</a>
+    <br>
     <button type="submit">登录</button>
 </form>
 </body>

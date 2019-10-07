@@ -31,4 +31,5 @@ urlpatterns = [
     re_path(r"^login_ajax_check$", views.login_ajax_check),
     re_path(r"^change_pwd$", views.change_pwd),
     re_path(r"^change_pwd_action$", views.change_pwd_action),
+    re_path(r"^verify_code$", views.verify_code),
 ]

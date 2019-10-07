@@ -1540,38 +1540,41 @@ session：涉及到安全性要求比较高的数据。银行卡账户,密码
 
 ## 7. csrf攻击
 --------
+1. **案例**
+	> 首先做一个登录页，让用户输入用户名和密码进行登录，登录成功之后跳转到的修改密码页面。在修改密码页面输入新密码，点击确认按钮完成密码修改。
+	
+	> 登录页需要一个模板文件login_form.html.
+	> 修改密码页面也需要一个模板文件change_pwd.html.
+	> 显示登录页的视图login_form.
+	> 验证登录的视图login_form_check.
+	> 显示修改密码页的视图change_pwd.
+	> 处理修改密码的视change_pwd_action.
+	
+	>加功能：
+	
+	>只有用户登录之后才可以进行修改密码操作。
 
-首先做一个登录页，让用户输入用户名和密码进行登录，登录成功之后跳转的修改密码页面。在修改密码页面输入新密码，点击确认按钮完成密码修改。
+	**登录装饰器函数。**
+	
+		![](media/image32.png)
+	
+	**案例流程图：**
+	
+		![](media/image33.png)
 
-登录页需要一个模板文件login.html.修改密码页面也需要一个模板文件change\_pwd.html.
+2. **django防止csrf的方式：**
 
-显示登录页的视图login，验证登录的视图login\_check，显示发帖页的视图change\_pwd,处理修改密码的视图change\_pwd\_action.
+	1. 默认打开csrf中间件。
 
-加功能：
+	2. 表单post提交数据时加上{% csrf\_token %}标签。
 
-a)只有用户登录之后才可以进行修改密码操作。
+3. **防御原理:**
 
-> **登录装饰器函数。**
+	* 渲染模板文件时在页面生成一个名字叫做csrfmiddlewaretoken的隐藏域。
 
-![](media/image32.png)
+	* 服务器交给浏览器保存一个名字为csrftoken的cookie信息。
 
-**案例流程图：**
-
-![](media/image33.png)
-
-django防止csrf的方式：
-
-1\) 默认打开csrf中间件。
-
-2\) 表单post提交数据时加上{% csrf\_token %}标签。
-
-**防御原理:**
-
-1)  渲染模板文件时在页面生成一个名字叫做csrfmiddlewaretoken的隐藏域。
-
-2)  服务器交给浏览器保存一个名字为csrftoken的cookie信息。
-
-3)  提交表单时，两个值都会发给服务器，服务器进行比对，如果一样，则csrf验证通过，否则失败。
+	* 提交表单时，两个值都会发给服务器，服务器进行比对，如果一样，则csrf验证通过，否则失败。
 
 ## 8. 验证码
 ------
@@ -1583,45 +1586,71 @@ django防止csrf的方式：
 
 当某一个url配置的地址发生变化时，页面上使用反向解析生成地址的位置不需要发生变化。
 
-**根据url 正则表达式的配置动态的生成url。**
+1. 反向解析操作步骤
 
-**在项目urls中包含具体应用的urls文件时指定namespace;**
+	1. 根据url 正则表达式的配置动态的生成url。
 
-![](media/image34.tiff)
+	2. 在项目urls中包含具体应用的urls文件时指定namespace;
 
-**在应用的urls中配置是指定name;**
+		![](media/image34.tiff)
 
-![](media/image35.tiff)
+	3. 在应用的urls中配置是指定name;
 
-在模板文件中使用时，格式如下:
+		![](media/image35.tiff)
 
-{% url 'namespace名字：name' %} 例如{% url 'booktest:fan2'%}
+2. 反向解析具体用法：
 
-带位置参数：
+	1. 在模板文件中使用时，格式如下:
 
-{% url 'namespace名字：name' 参数 %} 例如{% url 'booktest:fan2' 1%}
+		* 不带参数：
+		
+			```
+			{% url 'namespace名字：name' %} 
+			例如:
+			{% url 'booktest:fan2'%}
+			```
 
-带关键字参数：
+		* 带位置参数：
+	
+			```
+			{% url 'namespace名字：name' 参数 %} 
+			例如:
+			{% url 'booktest:fan2' 1%}
+			```
+			
+		* 带关键字参数：
+	
+			```
+			{% url 'namespace名字：name' 关键字参数 %} 
+			例如:
+			{% url 'booktest:fan2' id=1 %}
+				```
+		
+	2. 在重定向的时候使用反向解析：
 
-{% url 'namespace名字：name' 关键字参数 %} 例如{% url 'booktest:fan2'
-id=1 %}
-
-在重定向的时候使用反向解析：
-
-from django.core.urlresolvers import reverse
-
-无参数：
-
-reverse('namespace名字:name名字')
-
-如果有位置参数
-
-reverse('namespace名字:name名字', args = 位置参数元组)
-
-如果有关键字参数
-
-reverse('namespace名字:name名字', kwargs=字典)
-
+		* 导入reverse函数
+		 
+			```python
+			from django.urls import reverse
+			```
+	
+		* 无参数：
+	
+			```
+			reverse('namespace名字:name名字')
+			```
+			
+		* 如果有位置参数
+	
+			```
+			reverse('namespace名字:name名字', args = 位置参数元组)
+			```
+			
+		* 如果有关键字参数
+		
+			```
+			reverse('namespace名字:name名字', kwargs=字典)
+			```
 # 其他技术
 ========
 

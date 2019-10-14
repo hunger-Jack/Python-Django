@@ -1659,21 +1659,21 @@ session：涉及到安全性要求比较高的数据。银行卡账户,密码
 
 ### 1.1 使用
 
-在 网页使用的css文件，js文件和图片叫做静态文件。
+1. 在网页使用的css文件，js文件和图片叫做静态文件。
 
-1)  新建静态文件夹 static。
+	1. 新建静态文件夹 static。
+	
+		![](media/image36.tiff)
 
-![](media/image36.tiff)
+	2. 配置静态文件所在的物理目录。Settings.py
 
-2\) 配置静态文件所在的物理目录。Settings.py
+		![](media/image37.tiff)
 
-![](media/image37.tiff)
+		* STATIC_URL设置访问静态文件对应的url。
 
-STATIC\_URL设置访问静态文件对应的url。
+		* STATICFILES\_DIRS设置静态文件所在的物理目录。
 
-STATICFILES\_DIRS设置静态文件所在的物理目录。
-
-**动态生成静态文件的路径。**
+2. **动态生成静态文件的路径。**
 
 ### 1.2 加载目录
 

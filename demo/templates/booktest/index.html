@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
-<body>
+{% load static from staticfiles %}
+<body background="{% static 'images/python.png' %}">
 <h1>{{title}}</h1>
 {%for i in list%}
 {{i}}<br>

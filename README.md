@@ -843,3 +843,24 @@ def login_check(func):
         <a href="{% url 'booktest:index' 1 %}">首页</a>
         <a href="{% url 'booktest:index' num=2 %}">首页</a>
         ```
+       
+## 动态加载动态资源url
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<!--动态生成python.png的静态资源url-->
+{% load static from staticfiles %}
+<body background="{% static 'images/python.png' %}">
+<!--动态生成python.png的静态资源url-->
+<h1>{{title}}</h1>
+{%for i in list%}
+{{i}}<br>
+{%endfor%}
+</body>
+</html>
+```

@@ -1683,7 +1683,7 @@ STATICFILES\_FINDERS=('django.contrib.staticfiles.finders.FileSystemFinder',
 ## 2. 中间件
 ------
 
-中间件函数是django框架给我们预留的函数接口，让我们可以干预请求和应答的过程。
+Django中的中间件是一个轻量级、底层的插件系统，可以介入Django的请求和响应处理过程，修改Django的输入或输出。中间件的设计为开发者提供了一种无侵入式的开发方式，增强了Django框架的健壮性，其它的MVC框架也有这个功能，名称为IoC。
 
 ![](media/image38.png)
 
@@ -1693,56 +1693,425 @@ STATICFILES\_FINDERS=('django.contrib.staticfiles.finders.FileSystemFinder',
 
 ### 2.2 使用中间件
 
-1)  新建middleware.py文件。
+1. 新建middleware.py文件。
 
-![](media/image39.tiff)
+	![](media/image39.tiff)
 
-1)  定义中间件类。
+2. 定义中间件类。
 
-> ![](media/image40.png)
->
-> 在类中定义中间件预留函数。
->
-> \_\_init\_\_:服务器响应第一个请求的时候调用。
->
-> process\_request:是在产生request对象，进行url匹配之前调用。
->
-> process\_view：是url匹配之后，调用视图函数之前。
->
-> process\_response：视图函数调用之后，内容返回给浏览器之前。
->
-> process\_exception:视图函数出现异常，会调用这个函数。
->
-> 如果注册的多个中间件类中包含process\_exception函数的时候，调用的顺序跟注册的顺序是相反的。
+	Django在中间件中预置了五个方法，这五个方法的区别在于不同的阶段执行，对输入或输出进行干预，方法如下：
+	
+	1. 初始化：无需任何参数，服务器响应第一个请求的时候调用一次，用于确定是否启用当前中间件。
+	
+		```
+		def __init__(self):
+			pass
+		```
+	    
+	2. 处理请求前：在每个请求上，request对象产生之后，url匹配之前调用，返回None或HttpResponse对象。
+	
+		```
+		def process_request(self, request):
+	    pass
+		```
+	
+	3. 处理视图前：在每个请求上，url匹配之后，视图函数调用之前调用，返回None或HttpResponse对象。
+	
+		```
+		def process_view(self,request,view_func,*view_args,**view_kwargs):
+	   	pass
+		```
+	
+	4. 处理响应后：视图函数调用之后，所有响应返回浏览器之前被调用，在每个请求上调用，返回HttpResponse对象。
+	
+		```
+		def process_response(self, request, response):
+	   	pass
+		```
+	
+	5. 异常处理：当视图抛出异常时调用，在每个请求上调用，返回一个HttpResponse对象。
+	
+		```
+		def process_exception(self, request,exception):
+	   	pass
+		```
 
-1)  注册中间件类。
+		> 如果多个注册的中间件类中都有process_exception的方法，则先注册的后执行。
 
-> ![](media/image41.png)
+3. 注册中间件类。
+
+	> ![](media/image41.png)
 
 ## 3. Admin后台管理
 -------------
 
 ### 3.1 使用
 
-1\) 本地化。语言和时区本地化。
+1. 本地化。语言和时区本地化。
 
-2\) 创建超级管理员。
+2. 创建超级管理员。
 
-> python mange.py createsuperuser
+	> python mange.py createsuperuser
 
-3\) 注册模型类。
+3. 注册模型类。
 
-4\) 自定义管理页面。
+4. 自定义管理页面。
 
-自定义模型管理类。
+5. 自定义模型管理类。
 
 注册模型类的时候给register函数添加第二个参数，就是自定义模型管理类的名字。
 
 ### 3.2 模型管理类相关属性
 
-1\) 列表页相关的选项。
+#### 3.2.1 列表页相关的选项。
 
-2\) 编辑页相关的选项。
+##### 页大小
+
+* 每页中显示多少条数据，默认为每页显示100条数据，属性如下：
+	
+	> list_per_page=100
+	
+	1. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+	
+		```
+		class AreaAdmin(admin.ModelAdmin):
+	    	list_per_page = 10
+	   ```
+	   	
+	2. 在浏览器中查看区域信息的列表页面，效果如下图：
+		
+		![](media/image001.png)
+
+##### "操作选项"的位置
+	
+* 顶部显示的属性，设置为True在顶部显示，设置为False不在顶部显示，默认为True。
+	
+	> actions_on_top=True
+	
+* 底部显示的属性，设置为True在底部显示，设置为False不在底部显示，默认为False。
+	
+	> actions_on_bottom=False
+	
+	1. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+	
+		```
+		class AreaAdmin(admin.ModelAdmin):
+	   	...
+	      actions_on_top = True
+	      actions_on_bottom = True
+		```
+	
+	2. 在浏览器中刷新效果如下图：
+	
+	![](media/image002.png)
+	
+	
+##### 列表中的列
+
+* 属性如下：
+	
+	> list_display=[模型字段1,模型字段2,...]
+	
+	1. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+	
+		```
+		class AreaAdmin(admin.ModelAdmin):
+		    ...
+		    list_display = ['id','atitle']
+		```
+		
+	2. 在浏览器中刷新效果如下图：
+	![](media/image003.png)
+	
+	> 点击列头可以进行升序或降序排列。
+	
+1. 将方法作为列
+	
+	* 列可以是模型字段，还可以是模型方法，要求方法有返回值。
+	
+		1. 打开booktest/models.py文件，修改AreaInfo类如下：
+		
+			```
+			class AreaInfo(models.Model):
+			    ...
+			    def title(self):
+			        return self.atitle
+			```
+		
+		2. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+		
+			```
+			class AreaAdmin(admin.ModelAdmin):
+			    ...
+			    list_display = ['id','atitle','title']
+			```    
+		    
+		3. 在浏览器中刷新效果如下图：
+		
+			![](media/image004.png)
+				
+	* 方法列是不能排序的，如果需要排序需要为方法指定排序依据。
+		
+		> admin_order_field=模型类字段
+		
+			1. 打开booktest/models.py文件，修改AreaInfo类如下：
+			
+				```
+				class AreaInfo(models.Model):
+				    ...
+				    def title(self):
+				        return self.atitle
+				    title.admin_order_field='atitle'
+				 ```   
+			    
+			2. 在浏览器中刷新效果如下图：
+	
+				![](media/image005.png)
+	
+2. 列标题
+
+	* 列标题默认为属性或方法的名称，可以通过属性设置。需要先将模型字段封装成方法，再对方法使用这个属性，模型字段不能直接使用这个属性。
+	
+		> short_description='列标题'
+		
+		1. 打开booktest/models.py文件，修改AreaInfo类如下：
+		
+			```
+			class AreaInfo(models.Model):
+			    ...
+			    title.short_description='区域名称'
+			```    
+		 
+		2. 在浏览器中刷新效果如下图：
+
+			![](media/image006.png)
+			
+3. 关联对象
+
+	* 无法直接访问关联对象的属性或方法，可以在模型类中封装方法，访问关联对象的成员。
+	
+		1. 打开booktest/models.py文件，修改AreaInfo类如下：
+		
+			```
+			class AreaInfo(models.Model):
+			    ...
+			    def parent(self):
+			        if self.aParent is None:
+			          return ''
+			        return self.aParent.atitle
+			    parent.short_description='父级区域名称'
+			```    
+		    
+		2. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+		
+			```
+			class AreaAdmin(admin.ModelAdmin):
+			    ...
+			    list_display = ['id','atitle','title','parent']
+			```    
+		    
+		3. 在浏览器中刷新效果如下图：
+
+			![](media/image007.png)
+	
+##### 右侧栏过滤器
+
+* 属性如下，只能接收字段，会将对应字段的值列出来，用于快速过滤。一般用于有重复值的字段。
+	
+	> list_filter=[]
+	
+	1. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+		
+			```
+			class AreaAdmin(admin.ModelAdmin):
+			    ...
+			    list_filter=['atitle']
+			```
+			
+	2. 在浏览器中刷新效果如下图：
+
+		![](media/image008.png)
+	
+##### 搜索框
+
+* 属性如下，用于对指定字段的值进行搜索，支持模糊查询。列表类型，表示在这些字段上进行搜索。
+	
+	> search_fields=[]
+	
+	1. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+		
+		```
+		class AreaAdmin(admin.ModelAdmin):
+		    ...
+		    search_fields=['atitle']
+		```
+		
+	2. 在浏览器中刷新效果如下图：
+	
+		![](media/image009.png)
+	
+##### 中文标题
+
+1. 打开booktest/models.py文件，修改模型类，为属性指定verbose_name参数，即第一个参数。
+	
+	```
+	class AreaInfo(models.Model):
+	    atitle=models.CharField('标题',max_length=30)#名称
+	    ...
+	```
+	
+2. 在浏览器中刷新效果如下图：
+
+	![](media/image010.png)
+
+#### 3.2.2 编辑页相关的选项。
+
+##### 显示字段顺序
+
+* 属性如下：
+
+	> fields=[]
+	
+	1. 点击某行ID的链接，可以转到修改页面，默认效果如下图：
+	
+		![](media/image011.png)
+	
+	2. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+	
+		```
+		class AreaAdmin(admin.ModelAdmin):
+		    ...
+		    fields=['aParent','atitle']
+		```
+		
+	3. 刷新浏览器效果如下图：
+	
+		![](media/image012.png)
+	
+* 在下拉列表中输出的是对象的名称，可以在模型类中定义str方法用于对象转换字符串。
+	
+	1. 打开booktest/models.py文件，修改AreaInfo类，添加str方法。
+	
+		```
+		class AreaInfo(models.Model):
+		    ...
+		    def __str__(self):
+		        return self.atitle
+		```
+		
+	2. 刷新浏览器效果如下图：
+	
+		![](media/image013.png)
+	
+	##### 分组显示
+	
+	* 属性如下：
+	
+		> fieldset=(
+		    ('组1标题',{'fields':('字段1','字段2')}),
+		    ('组2标题',{'fields':('字段3','字段4')}),
+		)
+		
+		1. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+		
+			```
+			class AreaAdmin(admin.ModelAdmin):
+			    ...
+			    # fields=['aParent','atitle']
+			    fieldsets = (
+			        ('基本', {'fields': ['atitle']}),
+			        ('高级', {'fields': ['aParent']})
+			    )
+		    ```
+		    
+		2. 刷新浏览器效果如下图：
+		
+			![](media/image014.png)
+		
+		说明：fields与fieldsets两者选一使用。
+
+##### 关联对象
+
+* 在一对多的关系中，可以在一端的编辑页面中编辑多端的对象，嵌入多端对象的方式包括表格、块两种。 类型InlineModelAdmin：表示在模型的编辑页面嵌入关联模型的编辑。子类TabularInline：以表格的形式嵌入。子类StackedInline：以块的形式嵌入。
+
+	1. 打开booktest/admin.py文件，创建AreaStackedInline类。
+	
+		```
+		class AreaStackedInline(admin.StackedInline):
+		    model = AreaInfo#关联子对象
+		    extra = 2#额外编辑2个子对象
+	    ```
+	    
+	2. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+	
+		```
+		class AreaAdmin(admin.ModelAdmin):
+		    ...
+		    inlines = [AreaStackedInline]
+	    ```
+	    
+	3. 刷新浏览器效果如下图：
+	
+		![](media/image015.png)
+
+* 可以用表格的形式嵌入。
+
+	1. 打开booktest/admin.py文件，创建AreaTabularInline类。
+	
+		```
+		class AreaTabularInline(admin.TabularInline):
+		    model = AreaInfo#关联子对象
+		    extra = 2#额外编辑2个子对象
+	    ```
+	    
+	2. 打开booktest/admin.py文件，修改AreaAdmin类如下：
+	
+		```
+		class AreaAdmin(admin.ModelAdmin):
+		    ...
+		    inlines = [AreaTabularInline]
+	    ```
+	    
+	3. 刷新浏览器效果如下图：
+	
+			![](media/image016.png)
+
+#### 3.2.3 重写模板
+
+1. 在templates/目录下创建admin目录，结构如下图：
+
+	![](media/image017.png)
+
+2. 打开当前虚拟环境中Django的目录，再向下找到admin的模板，目录如下：
+
+	> /home/python/.virtualenvs/py_django/lib/python3.5/site-packages/django/contrib/admin/templates/admin
+
+3. 将需要更改文件拷贝到第一步建好的目录里，此处以base_site.html为例。
+
+	![](media/image017.png)
+	
+	编辑base_site.html文件：
+	
+	```
+		{% extends "admin/base.html" %}
+		
+		{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+		
+		{% block branding %}
+		<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+		<hr>
+		<h1>自定义的管理页模板</h1>
+		<hr>
+		{% endblock %}
+		
+		{% block nav-global %}{% endblock %}
+	```
+	
+4. 在浏览器中转到列表页面，刷新后如下图：
+
+	![](media/image018.png)
+
+其它后台的模板可以按照相同的方式进行修改。
 
 ## 4. 上传图片
 -----------
@@ -1751,33 +2120,33 @@ STATICFILES\_FINDERS=('django.contrib.staticfiles.finders.FileSystemFinder',
 
 ### 4.1 配置上传文件保存目录
 
-1)  新建上传文件保存目录。
+1. 新建上传文件保存目录。
 
-> ![](media/image42.tiff)
+	> ![](media/image42.tiff)
 
-1)  配置上传文件保存目录。
+2. 配置上传文件保存目录。
 
-![](media/image43.tiff)
+	![](media/image43.tiff)
 
 ### 4.2 后台管理页面上传图片
 
-1)  设计模型类。
+1. 设计模型类。
 
-![](media/image44.png)
+	![](media/image44.png)
 
-1)  迁移生成表格。
+2. 迁移生成表格。
 
-![](media/image45.png)
+	![](media/image45.png)
 
-3\) 注册模型类。
+3. 注册模型类。
 
 ### 4.3 用户自定义页面上传图片
 
-1)  定义用户上传图片的页面并显示，是一个自定义的表单。
+1. 定义用户上传图片的页面并显示，是一个自定义的表单。
 
-![](media/image46.png)
+	![](media/image46.png)
 
-1)  定义接收上传文件的视图函数。
+2. 定义接收上传文件的视图函数。
 
 request对象有一个FILES的属性，类似于字典，通过request.FILES可以获取上传文件的处理对象。
 

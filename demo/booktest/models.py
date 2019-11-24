@@ -54,5 +54,25 @@ class HeroInfo(models.Model):
 
 class AreaInfo(models.Model):
     """地区模型对象（自关联）"""
-    a_title = models.CharField(max_length=20)
+    a_title = models.CharField("区域名称", max_length=20)
     a_parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
+
+    # 自定义字段名字
+    def area_test(self):
+        return self.a_title
+
+    def parent(self):
+        if not self.a_parent:
+            return ""
+        return self.a_parent.a_title
+
+    # 下拉列表中输出的是对象的名称
+    def __str__(self):
+        return self.a_title
+
+    # 自定义字段排序
+    area_test.admin_order_field = "a_title"
+    # 自定义字段重命名
+    area_test.short_description = "区域名称"
+    parent.short_description = "父级区域"
+    parent.admin_order_field = "a_parent"

@@ -2116,7 +2116,6 @@ Django中的中间件是一个轻量级、底层的插件系统，可以介入Dj
 ## 4. 上传图片
 -----------
 
-商品销售网站。
 
 ### 4.1 配置上传文件保存目录
 
@@ -2148,22 +2147,24 @@ Django中的中间件是一个轻量级、底层的插件系统，可以介入Dj
 
 2. 定义接收上传文件的视图函数。
 
-request对象有一个FILES的属性，类似于字典，通过request.FILES可以获取上传文件的处理对象。
+	![](media/image0001.png)
+	
+	request对象有一个FILES的属性，类似于字典，通过request.FILES可以获取上传文件的处理对象。
+	
+	在django中，上传文件不大于2.5M,文件放在内存中。上传文件大于2.5M,文件内容写到一个临时文件中。
+	
+	Django处理上传文件的两个类：
+	
+	> FILE\_UPLOAD\_HANDLERS=
+	> ("django.core.files.uploadhandler.MemoryFileUploadHandler",
+	>
+	> "django.core.files.uploadhandler.TemporaryFileUploadHandler")
 
-在django中，上传文件不大于2.5M,文件放在内存中。上传文件大于2.5M,文件内容写到一个临时文件中。
+3. **上传图片参考资料：**
 
-Django处理上传文件的两个类：
-
-> FILE\_UPLOAD\_HANDLERS=
-> ("django.core.files.uploadhandler.MemoryFileUploadHandler",
->
-> "django.core.files.uploadhandler.TemporaryFileUploadHandler")
-
-**上传图片参考资料：**
-
-1.  [*http://python.usyiyi.cn/documents/django\_182/topics/http/file-uploads.html*](http://python.usyiyi.cn/documents/django_182/topics/http/file-uploads.html)
-
-2.  *http://python.usyiyi.cn/documents/django\_182/ref/files/uploads.html\#django.core.files.uploadedfile.UploadedFile*
+	1.  [*http://python.usyiyi.cn/documents/django\_182/topics/http/file-uploads.html*](http://python.usyiyi.cn/documents/django_182/topics/http/file-uploads.html)
+	
+	2.  *http://python.usyiyi.cn/documents/django\_182/ref/files/uploads.html\#django.core.files.uploadedfile.UploadedFile*
 
 ## 5. 分页
 ----

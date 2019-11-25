@@ -76,3 +76,8 @@ class AreaInfo(models.Model):
     area_test.short_description = "区域名称"
     parent.short_description = "父级区域"
     parent.admin_order_field = "a_parent"
+
+
+class PicTest(models.Model):
+    '''图片上传模型'''
+    good_pic = models.ImageField(upload_to="booktest")

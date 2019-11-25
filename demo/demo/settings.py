@@ -127,7 +127,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static/'  # 设置访问静态文件对应的url
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-]
+]  # 设置静态文件所在的物理目录。
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')  # 设置上传文件的存放目录

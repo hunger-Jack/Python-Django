@@ -1,9 +1,10 @@
 from datetime import date
 import random
+from django.conf import settings
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse
 from django.template import loader,RequestContext
-from booktest.models import BookInfo,AreaInfo
+from booktest.models import BookInfo,AreaInfo,PicTest
 from PIL import Image, ImageDraw, ImageFont
 from django.utils.six import BytesIO
 from django.urls import reverse
@@ -222,3 +223,28 @@ def verify_code(request):
     im.save(buf, 'png')
     # 将内存中的图片数据返回给客户端，MIME类型为图片png
     return HttpResponse(buf.getvalue(), 'image/png')
+
+
+def upload(request):
+    """上传图片页面"""
+    return render(request, "booktest/upload.html")
+
+
+def upload_handle(request):
+    """图片处理"""
+    # 1. 接收图片
+    pic = request.FILES['pic']
+
+    # 2. 创建文件来保存图片
+    save_path = "%s/booktest/%s" % (settings.MEDIA_ROOT, pic.name)
+
+    # 2. 读取下载图片
+    with open(save_path, "wb") as f:
+        for chunk in pic.chunks():
+            f.write(chunk)
+
+    # 3. 把图片相对路径存入数据库
+    PicTest.objects.create(good_pic="booktest/%s" % pic.name)
+
+    # 4. 返回成功状态
+    return HttpResponse("OK")

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from booktest.models import BookInfo,HeroInfo,AreaInfo
+from booktest.models import BookInfo,HeroInfo,AreaInfo,PicTest
 
 # Register your models here.
 # 后台管理相关文件-可视化操作数据库的各种操作
@@ -35,9 +35,7 @@ class AreaInfoAdmin(admin.ModelAdmin):
     inlines = [AreaStackedInline]
 
 
-
-
-
 admin.site.register(BookInfo, BookInfoAdmin)
 admin.site.register(HeroInfo, HeroInfoAdmin)
 admin.site.register(AreaInfo, AreaInfoAdmin)
+admin.site.register(PicTest)

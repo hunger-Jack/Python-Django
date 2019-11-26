@@ -37,5 +37,9 @@ urlpatterns = [
     re_path(r"^verify_code$", views.verify_code),
     re_path(r"^upload$", views.upload),
     re_path(r"^upload_handle$", views.upload_handle),
-    re_path(r"^show_areas(?P<num>\d*)$", views.show_areas)
+    re_path(r"^show_areas(?P<num>\d*)$", views.show_areas),
+    re_path(r"^prov$", views.prov),
+    re_path(r"^city/(?P<prov_id>\d+)$", views.city),
+    re_path(r"^dis/(?P<dis_id>\d+)$", views.dis)
+
 ]

@@ -2252,35 +2252,35 @@ Django中的中间件是一个轻量级、底层的插件系统，可以介入Dj
 ## 6. 省市县选择案例
 --------------
 
-1)  显示省地区信息。
+1. 显示省地区信息。
 
-> \$.get('/prov', function(data){
+> $.get('/prov', function(data){
 >
 > })
 
-1)  省改变时在对应的下拉列表框中显示下级市的信息。
+2. 省改变时在对应的下拉列表框中显示下级市的信息。
 
-> \$.get('/city?pid='+pid, function(data){
+> $.get('/city?pid='+pid, function(data){
 
-})
+> })
 
 request.GET.get(‘pid’)
 
 > 或者:
 >
-> \$.get('/city'+\$(this).val(), function(data){
+> $.get('/city'+\$(this).val(), function(data){
 
-})
+> })
 
-1)  市改变时在对应的下拉列表框中显示下级县的信息。
+3. 市改变时在对应的下拉列表框中显示下级县的信息。
 
-> \$.get('/dis?pid='+pid, function(data){
+> $.get('/dis?pid='+pid, function(data){
 >
 > })
 >
 > 或者:
 >
-> \$.get('/dis'+\$(this).val(), function(data){
+> $.get('/dis'+\$(this).val(), function(data){
 >
 > })
 

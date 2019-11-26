@@ -92,18 +92,40 @@ def delete(request, b_id):
 
 
 def areas(request):
-    """显示地区信息"""
-    # 1. 获取广州地区信息
-    areas = AreaInfo.objects.get(a_title="广州市")
-
-    # 2. 获取与广州关联的父级信息
-    parent = areas.a_parent  # 多查询一注意不要加括号
-
-    # 3. 获取与广州关联的下级信息
-    children = areas.areainfo_set.all()  # 一查询多注意areainfo是小写
+    """省市县案例"""
 
     # 4. 返回给浏览器信息
-    return render(request, "booktest/areas.html", {"areas": areas, "parent": parent, "children": children})
+    return render(request, "booktest/areas.html")
+
+
+def prov(request):
+    """获取省的信息"""
+    provinces = AreaInfo.objects.filter(a_parent__isnull=True)
+    province_list = []  #  对象不能直接转为json格式
+    for province in provinces:
+        province_list.append((province.id, province.a_title))
+
+    return JsonResponse({"data": province_list})
+
+
+def city(request, prov_id):
+    """获取市的信息"""
+    cities = AreaInfo.objects.filter(a_parent=int(prov_id))
+    city_list = []  #  对象不能直接转为json格式
+    for city in cities:
+        city_list.append((city.id, city.a_title))
+
+    return JsonResponse({"data": city_list})
+
+
+def dis(request, dis_id):
+    """获取县的信息"""
+    dises = AreaInfo.objects.filter(a_parent=int(dis_id))
+    dis_list = []  #  对象不能直接转为json格式
+    for dis in dises:
+        dis_list.append((dis.id, dis.a_title))
+
+    return JsonResponse({"data": dis_list})
 
 
 def login_form(request):

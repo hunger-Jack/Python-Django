@@ -2169,53 +2169,85 @@ Django中的中间件是一个轻量级、底层的插件系统，可以介入Dj
 ## 5. 分页
 ----
 
-查询出所有省级地区的信息，显示在页面上。
+1. 查询出所有省级地区的信息，显示在页面上。
 
-AeroInfo.objects.filter(aParent\_\_isnull = True)
+	```python
+	def show_areas(request, num):
+    """分页"""
+    # 1. 获取地区数据
+    areas = AreaInfo.objects.filter(a_parent__isnull=True)
 
-1)  查询出所有省级地区的信息。
+    # 2. 分页，每页显示10条
+    paginator = Paginator(areas, 10)
 
-2)  按每页显示10条信息进行分页，默认显示第一页的信息，下面并显示出页码。
+    # 3. 默认获取第一页内容
+    if num is "":
+        page = paginator.page(1)
+    else:
+        page = paginator.page(int(num))
 
-3)  点击i页链接的时候，就显示第i页的省级地区信息。
+    # 4. 把数据传给视图
+    return render(request, "booktest/show_areas.html", {"page": page, "page": page})
+	```
+	```html
+	<ul>
+	    {%for content in page%}
+	        <li>
+	            {{ content.a_title }}
+	        </li>
+	    {% endfor %}
+	</ul>
+	{% if page.has_previous %}
+	< <a href="show_areas{{ page.previous_page_number }}">上一页</a>
+	{% endif %}
+	{%for index in page.paginator.page_range %}
+	    {% if index == page.number %}
+	        {{index}}&nbsp;
+	    {% else %}
+	        <a href="show_areas{{ index }}">
+	            {{ index }}
+	        </a> &nbsp;
+	    {% endif %}
+	{% endfor %}
+	{% if page.has_next %}
+	<a href="show_areas{{ page.next_page_number }}">下一页</a> >
+	{% endif %}
+	```
+2. **Paginator类对象的属性:**
 
-from django.core.paginator import Paginator
+	属性名        |说明
+	------------- |----------------------
+	num_pages   | 返回分页之后的总页数
+	page_range  | 返回分页后页码的列表
 
-paginator = Paginator(areas, 10) \#按每页10条数据进行分页
+3. **Paginator类对象的方法:**
 
-**Paginator类对象的属性:**
 
-  属性名        说明
-  ------------- ----------------------
-  num\_pages    返回分页之后的总页数
-  page\_range   返回分页后页码的列表
+	|方法名|说明|
+	| --- | --- |
+	| page(self, number)  | 返回第number页的Page类实例对象|
 
-**Paginator类对象的方法:**
 
-  方法名               说明
-  -------------------- --------------------------------
-  page(self, number)   返回第number页的Page类实例对象
+4. **Page类对象的属性：**
 
-**Page类对象的属性：**
+	属性名   |      说明
+	--------------| ------------------------------
+	number        | 返回当前页的页码
+	object_list  | 返回包含当前页的数据的查询集
+	paginator     | 返回对应的Paginator类对象
 
-  属性名         说明
-  -------------- ------------------------------
-  number         返回当前页的页码
-  object\_list   返回包含当前页的数据的查询集
-  paginator      返回对应的Paginator类对象
+5. **Page类对象的方法：**
 
-**Page类对象的方法：**
+  属性名                 |  说明
+  ------------------------| ------------------------
+  has_previous          |  判断当前页是否有前一页
+  has_next               | 判断当前页是否有下一页
+  previous_page_number  | 返回前一页的页码
+  next_page_number      | 返回下一页的页码
 
-  属性名                   说明
-  ------------------------ ------------------------
-  has\_previous            判断当前页是否有前一页
-  has\_next                判断当前页是否有下一页
-  previous\_page\_number   返回前一页的页码
-  next\_page\_number       返回下一页的页码
+6. **分页参考资料：**
 
-**分页参考资料：**
-
-http://python.usyiyi.cn/translate/django\_182/topics/pagination.html
+	http://python.usyiyi.cn/translate/django\_182/topics/pagination.html
 
 ## 6. 省市县选择案例
 --------------

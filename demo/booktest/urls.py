@@ -36,5 +36,6 @@ urlpatterns = [
     re_path(r"^change_pwd_action$", views.change_pwd_action),
     re_path(r"^verify_code$", views.verify_code),
     re_path(r"^upload$", views.upload),
-    re_path(r"^upload_handle$", views.upload_handle)
+    re_path(r"^upload_handle$", views.upload_handle),
+    re_path(r"^show_areas(?P<num>\d*)$", views.show_areas)
 ]

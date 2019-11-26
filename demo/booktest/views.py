@@ -7,6 +7,7 @@ from django.template import loader,RequestContext
 from booktest.models import BookInfo,AreaInfo,PicTest
 from PIL import Image, ImageDraw, ImageFont
 from django.utils.six import BytesIO
+from django.core.paginator import Paginator
 from django.urls import reverse
 # Create your views here.
 
@@ -248,3 +249,21 @@ def upload_handle(request):
 
     # 4. 返回成功状态
     return HttpResponse("OK")
+
+
+def show_areas(request, num):
+    """分页"""
+    # 1. 获取地区数据
+    areas = AreaInfo.objects.filter(a_parent__isnull=True)
+
+    # 2. 分页，每页显示10条
+    paginator = Paginator(areas, 10)
+
+    # 3. 默认获取第一页内容
+    if num is "":
+        page = paginator.page(1)
+    else:
+        page = paginator.page(int(num))
+
+    # 4. 把数据传给视图
+    return render(request, "booktest/show_areas.html", {"page": page, "page": page})
